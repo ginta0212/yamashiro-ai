@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>山代案内AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('https://www.japan.travel/share/img/japan-photo-library/57-2-Yamashiro-Onsen-Katayama-Hot-Spring-Bath-Hall-Kaga-City-Ishikawa.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="bg-opacity-80 bg-white min-h-screen flex flex-col items-center justify-start p-4">
+  <h1 class="text-3xl font-bold text-gray-800 mt-4 mb-2">山代案内AI</h1>
+  <p class="text-sm text-gray-600">※OpenAI APIを利用しています。回答には少し時間がかかる場合があります。</p>
+
+  <div class="w-full max-w-md bg-white bg-opacity-90 shadow-lg rounded-lg p-4 mt-6">
+    <div id="messages" class="min-h-[200px] mb-4 text-sm space-y-2 overflow-y-auto max-h-96"></div>
+    <div class="flex gap-2">
+      <input type="text" id="userInput" class="flex-1 border border-gray-300 rounded px-3 py-2" placeholder="例: 山代でスイーツが食べたい" />
+      <button onclick="sendMessage()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">送信</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const messages = document.getElementById('messages');
+      const userText = input.value.trim();
+      if (!userText) return;
+      messages.innerHTML += `<div class='text-blue-700'>👤 ${userText}</div>`;
+      input.value = '';
+
+      try {
+        const res = await fetch('https://your-render-url.onrender.com/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: userText })
+        });
+        const data = await res.json();
+        messages.innerHTML += `<div class='text-green-700'>🤖 ${data.reply}</div>`;
+        messages.scrollTop = messages.scrollHeight;
+      } catch (err) {
+        messages.innerHTML += `<div class='text-red-600'>⚠️ エラー：サーバーに接続できませんでした</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
