@@ -7,23 +7,42 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background-image: url('https://www.japan.travel/share/img/japan-photo-library/57-2-Yamashiro-Onsen-Katayama-Hot-Spring-Bath-Hall-Kaga-City-Ishikawa.jpg');
-      background-size: cover;
-      background-attachment: fixed;
+      background: radial-gradient(circle at top, #0f172a, #1e293b);
+      color: #e2e8f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .message-user {
+      color: #60a5fa;
+    }
+    .message-ai {
+      color: #34d399;
+    }
+    .message-error {
+      color: #f87171;
     }
   </style>
 </head>
-<body class="bg-opacity-80 bg-white min-h-screen flex flex-col items-center justify-start p-4">
-  <h1 class="text-3xl font-bold text-gray-800 mt-4 mb-2">山代案内AI</h1>
-  <p class="text-sm text-gray-600">※OpenAI APIを利用しています。回答には少し時間がかかる場合があります。</p>
+<body class="min-h-screen flex flex-col items-center justify-start p-4">
+  <header class="text-center mt-8">
+    <h1 class="text-5xl font-bold text-cyan-400 mb-4 tracking-wide">山代案内AI</h1>
+    <p class="text-md text-slate-300">観光も、グルメも。あなたの旅に、ちょっとだけAIの知恵を。</p>
+  </header>
 
-  <div class="w-full max-w-md bg-white bg-opacity-90 shadow-lg rounded-lg p-4 mt-6">
-    <div id="messages" class="min-h-[200px] mb-4 text-sm space-y-2 overflow-y-auto max-h-96"></div>
+  <main class="w-full max-w-xl glass rounded-xl p-6 mt-10">
+    <div id="messages" class="min-h-[200px] max-h-96 overflow-y-auto mb-4 text-sm space-y-3"></div>
     <div class="flex gap-2">
-      <input type="text" id="userInput" class="flex-1 border border-gray-300 rounded px-3 py-2" placeholder="例: 山代でスイーツが食べたい" />
-      <button onclick="sendMessage()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">送信</button>
+      <input type="text" id="userInput" class="flex-1 rounded-md px-4 py-2 bg-slate-900 text-white border border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="例: 山代でスイーツが食べたい" />
+      <button onclick="sendMessage()" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md font-semibold shadow-md">送信</button>
     </div>
-  </div>
+  </main>
+
+  <footer class="mt-16 text-xs text-slate-500">© 2025 Yamashiro AI by てめぇ</footer>
 
   <script>
     async function sendMessage() {
@@ -31,7 +50,7 @@
       const messages = document.getElementById('messages');
       const userText = input.value.trim();
       if (!userText) return;
-      messages.innerHTML += `<div class='text-blue-700'>👤 ${userText}</div>`;
+      messages.innerHTML += `<div class='message-user'>👤 ${userText}</div>`;
       input.value = '';
 
       try {
@@ -43,10 +62,10 @@
           body: JSON.stringify({ message: userText })
         });
         const data = await res.json();
-        messages.innerHTML += `<div class='text-green-700'>🤖 ${data.reply}</div>`;
+        messages.innerHTML += `<div class='message-ai'>🤖 ${data.reply}</div>`;
         messages.scrollTop = messages.scrollHeight;
       } catch (err) {
-        messages.innerHTML += `<div class='text-red-600'>⚠️ エラー：サーバーに接続できませんでした</div>`;
+        messages.innerHTML += `<div class='message-error'>⚠️ エラー：サーバーに接続できませんでした</div>`;
       }
     }
   </script>
