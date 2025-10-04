@@ -1,175 +1,126 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>山代案内AI</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<style>
-  body {
-    font-family: 'Segoe UI', 'Inter', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, #f5f5f7, #e0f2f7);
-    color: rgba(30,30,30,0.9);
-    transition: background 0.5s, color 0.5s;
-    position: relative;
-  }
-  body.dark {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: rgba(224,232,240,0.9);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>山代案内AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: linear-gradient(135deg, rgba(240,248,255,1), rgba(255,255,255,0.8));
+      transition: background 0.5s ease, color 0.5s ease;
+    }
 
-  body::before {
-    content: '';
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05), transparent 70%);
-    pointer-events: none;
-    animation: floatBG 20s linear infinite;
-  }
-  @keyframes floatBG {
-    0% { transform: translate(0,0); }
-    50% { transform: translate(50px, -50px); }
-    100% { transform: translate(0,0); }
-  }
+    .dark body {
+      background: radial-gradient(circle at top left, #0f172a, #1e293b);
+    }
 
-  /* ガチガラスボックス */
-  .glass {
-    position: relative;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(25px) saturate(200%);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 1.5rem;
-    box-shadow: 0 4px 40px rgba(255,255,255,0.08), 0 0 80px rgba(0,255,255,0.05);
-    transition: background 0.5s, box-shadow 0.5s;
-    overflow: hidden;
-  }
-  body.dark .glass {
-    background: rgba(255,255,255,0.08);
-    box-shadow: 0 4px 35px rgba(0,255,255,0.1), 0 0 70px rgba(0,255,255,0.03);
-  }
+    /* === ガラスカード === */
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 1.5rem;
+      backdrop-filter: blur(30px) saturate(180%) brightness(1.2);
+      -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(1.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: background 0.5s ease, box-shadow 0.5s ease;
+    }
 
-  /* ハイライトと光の層 */
-  .glass::before {
-    content:'';
-    position:absolute;
-    top:0; left:0; width:100%; height:100%;
-    border-radius:1.5rem;
-    border-top:1px solid rgba(255,255,255,0.15);
-    border-left:1px solid rgba(255,255,255,0.1);
-    pointer-events:none;
-  }
-  .glass::after {
-    content:'';
-    position:absolute;
-    top:0; left:0; width:100%; height:100%;
-    border-radius:1.5rem;
-    background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent 70%);
-    pointer-events:none;
-  }
+    /* Light/Dark トグルボタン */
+    .toggle-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      color: #0077ff;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
 
-  @keyframes messageFade {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  #messages div { animation: messageFade 0.4s ease; }
+    .toggle-btn:hover {
+      background: rgba(255,255,255,0.4);
+    }
 
-  #messages::-webkit-scrollbar { width:8px; }
-  #messages::-webkit-scrollbar-thumb { background-color: rgba(56,189,248,0.5); border-radius:4px; }
-  #messages::-webkit-scrollbar-track { background:transparent; }
-</style>
+    /* テキストカラー調整 */
+    body.light p, body.light span, body.light h2 {
+      color: #333;
+    }
+
+    body.dark p, body.dark span, body.dark h2 {
+      color: #fff;
+    }
+
+    /* タイトル */
+    h1 {
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
 </head>
-<body>
+<body class="light text-center flex flex-col items-center justify-start min-h-screen py-10 transition-colors duration-500">
 
-<div class="fixed top-4 right-4">
-  <button id="modeToggle" class="px-4 py-2 rounded-md bg-cyan-400 text-white font-bold shadow-md hover:bg-cyan-500 transition-transform active:scale-95">
-    Light/Dark
-  </button>
-</div>
+  <button id="toggle" class="toggle-btn">Light/Dark</button>
 
-<header class="w-full max-w-4xl text-center mb-12">
-  <h1 class="text-6xl font-extrabold tracking-wide mb-4 drop-shadow-md bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400">
-    山代案内AI <i class="fas fa-robot"></i>
-  </h1>
-  <p class="text-black dark:text-white text-lg max-w-xl mx-auto">
-    未来的で直感的な案内AIがあなたの山代観光をサポート！
-  </p>
-</header>
+  <h1 class="text-4xl font-bold mb-2">山代案内AI 🤖</h1>
+  <p class="text-lg mb-8 opacity-90">未来的で直感的な案内AIがあなたの山代観光をサポート！</p>
 
-<main class="w-full max-w-4xl glass p-8 shadow-lg flex flex-col gap-6">
-  <section class="flex gap-8 justify-center flex-wrap">
-    <div class="flex flex-col items-center text-cyan-400 max-w-xs">
-      <i class="fas fa-hot-tub fa-3x mb-4"></i>
-      <h2 class="text-2xl font-bold mb-1 bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400 bg-clip-text text-transparent rounded-lg p-1">
-        温泉情報
-      </h2>
-      <p class="text-black dark:text-white text-center">山代温泉のおすすめスポットやイベント情報を案内</p>
+  <div class="glass w-11/12 max-w-3xl p-8 flex flex-col items-center space-y-6">
+    <div class="flex flex-wrap justify-center gap-10">
+      <div class="flex flex-col items-center space-y-2">
+        <span class="text-4xl">♨️</span>
+        <h2 class="text-xl font-semibold text-cyan-500">温泉情報</h2>
+        <p class="text-base opacity-90">山代温泉のおすすめスポットやイベント情報を案内</p>
+      </div>
+
+      <div class="flex flex-col items-center space-y-2">
+        <span class="text-4xl">🍰</span>
+        <h2 class="text-xl font-semibold text-pink-500">グルメ案内</h2>
+        <p class="text-base opacity-90">地元の美味しいスイーツや飲食店を紹介</p>
+      </div>
+
+      <div class="flex flex-col items-center space-y-2">
+        <span class="text-4xl">🗺️</span>
+        <h2 class="text-xl font-semibold text-sky-500">観光マップ</h2>
+        <p class="text-base opacity-90">山代周辺の見どころや散策ルートを提案</p>
+      </div>
     </div>
-    <div class="flex flex-col items-center text-cyan-400 max-w-xs">
-      <i class="fas fa-utensils fa-3x mb-4"></i>
-      <h2 class="text-2xl font-bold mb-1 bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400 bg-clip-text text-transparent rounded-lg p-1">
-        グルメ案内
-      </h2>
-      <p class="text-black dark:text-white text-center">地元の美味しいスイーツや飲食店を紹介</p>
+
+    <div class="glass w-full p-6 mt-8">
+      <div id="messages" class="h-64 overflow-y-auto text-left text-sm p-4 bg-white/10 rounded-2xl backdrop-blur-sm"></div>
+      <div class="flex mt-4">
+        <input id="userInput" type="text" placeholder="例: 山代でスイーツが食べたい" 
+          class="flex-1 p-3 rounded-l-2xl border-none bg-white/30 dark:bg-gray-800/40 backdrop-blur text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none" />
+        <button onclick="sendMessage()" class="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-r-2xl font-bold">送信 🚀</button>
+      </div>
     </div>
-    <div class="flex flex-col items-center text-cyan-400 max-w-xs">
-      <i class="fas fa-map-location-dot fa-3x mb-4"></i>
-      <h2 class="text-2xl font-bold mb-1 bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400 bg-clip-text text-transparent rounded-lg p-1">
-        観光マップ
-      </h2>
-      <p class="text-black dark:text-white text-center">山代周辺の見どころや散策ルートを提案</p>
-    </div>
-  </section>
+  </div>
 
-  <section>
-    <div id="messages" class="min-h-[250px] max-h-96 overflow-y-auto p-4 bg-white/10 dark:bg-gray-800/20 rounded-lg text-sm space-y-3 shadow-inner"></div>
-    <div class="flex gap-4 mt-4">
-      <input type="text" id="userInput" class="flex-1 rounded-lg px-5 py-3 bg-white/20 dark:bg-gray-700/20 text-black dark:text-white border border-white/30 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="例: 山代でスイーツが食べたい" />
-      <button onclick="sendMessage()" class="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform active:scale-95">
-        送信 <i class="fas fa-paper-plane ml-2"></i>
-      </button>
-    </div>
-  </section>
-</main>
-
-<footer class="mt-16 text-center text-xs text-slate-500 dark:text-slate-400 select-none">
-  © 2025 Yamashiro AI by てめぇ
-</footer>
-
-<script>
-const btn = document.getElementById('modeToggle');
-btn.addEventListener('click', () => { document.body.classList.toggle('dark'); });
-
-async function sendMessage() {
-  const input = document.getElementById('userInput');
-  const messages = document.getElementById('messages');
-  const userText = input.value.trim();
-  if (!userText) return;
-
-  messages.innerHTML += `<div class='text-cyan-400 font-semibold'>👤 ${userText}</div>`;
-  input.value = '';
-  messages.scrollTop = messages.scrollHeight;
-
-  try {
-    const res = await fetch('https://yamashiro-ai.onrender.com/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userText })
+  <script>
+    // モード切替
+    const toggle = document.getElementById('toggle');
+    const body = document.body;
+    toggle.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      body.classList.toggle('light');
     });
-    const data = await res.json();
-    messages.innerHTML += `<div class='text-green-400'>🤖 ${data.reply}</div>`;
-    messages.scrollTop = messages.scrollHeight;
-  } catch (err) {
-    messages.innerHTML += `<div class='text-red-500'>⚠️ エラー：サーバーに接続できませんでした</div>`;
-    messages.scrollTop = messages.scrollHeight;
-  }
-}
-</script>
 
+    // 仮チャット応答
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const messages = document.getElementById("messages");
+      if (!input.value.trim()) return;
+      messages.innerHTML += `<div class='text-cyan-500 mb-2'>👤 ${input.value}</div>`;
+      messages.innerHTML += `<div class='text-green-400 mb-2'>🤖 山代AI: ${input.value}ですね、少々お待ちください。</div>`;
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
 </body>
 </html>
