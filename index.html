@@ -75,6 +75,16 @@
       border-radius: 4px;
     }
     #messages::-webkit-scrollbar-track { background: transparent; }
+
+    /* === メッセージのフェードイン === */
+　@keyframes messageFade {
+  　from { opacity: 0; transform: translateY(8px); }
+  　to { opacity: 1; transform: translateY(0); }
+　}
+　　#messages div {
+  　　animation: messageFade 0.35s ease;
+　　}
+
   </style>
 </head>
 <body class="light">
@@ -134,15 +144,6 @@
       input.value = "";
       messages.scrollTop = messages.scrollHeight;
     }
-    /* メッセージのフェードイン */
-　@keyframes messageFade {
-  　from { opacity: 0; transform: translateY(8px); }
-  　to { opacity: 1; transform: translateY(0); }
-　}
-　#messages div {
-  　animation: messageFade 0.35s ease;
-　}
-
   </script>
 </body>
 </html>
