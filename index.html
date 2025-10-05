@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <script>
+    // bodyにクラス付与する方式に戻します！
+    (function() {
+      try {
+        var theme = localStorage.getItem("yamashiro-ai-theme");
+        if (theme === "dark") {
+          document.body.classList.add("dark");
+          document.body.classList.remove("light");
+        } else {
+          document.body.classList.add("light");
+          document.body.classList.remove("dark");
+        }
+      } catch(e) {}
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>山代案内AI</title>
@@ -46,6 +61,7 @@
       position: fixed;
       top: 1rem;
       right: 1rem;
+      z-index: 10000; /* 追加: かならず一番上に！ */
       background: rgba(255,255,255,0.3);
       border: 1px solid rgba(255,255,255,0.5);
       border-radius: 0.75rem;
@@ -75,7 +91,6 @@
     #messages div {
       animation: messageFade 0.35s ease;
     }
-    /* ローディングアニメーション */
     .loader {
       border: 4px solid #eee;
       border-top: 4px solid #38bdf8;
@@ -88,9 +103,37 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    .msg-user {
+      background: #e0f7fa;
+      color: #01579b;
+      padding: 8px 14px;
+      border-radius: 12px;
+      margin-bottom: 6px;
+      display: inline-block;
+      max-width: 90%;
+      word-break: break-all;
+    }
+    .msg-ai {
+      background: #e6ffe6;
+      color: #256029;
+      padding: 8px 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: inline-block;
+      max-width: 90%;
+      word-break: break-all;
+    }
+    body.dark .msg-user {
+      background: #164e63;
+      color: #7dd3fc;
+    }
+    body.dark .msg-ai {
+      background: #14532d;
+      color: #bbf7d0;
+    }
   </style>
 </head>
-<body class="light">
+<body>
   <!-- ダーク/ライトモード切替ボタン -->
   <button id="modeToggle" class="toggle-btn" aria-label="テーマ切替">Light/Dark</button>
 
@@ -132,7 +175,6 @@
         <div class="text-xs mt-1 text-cyan-400">考え中...</div>
       </div>
       <div class="flex mt-4">
-        <!-- 入力欄にlabelをつけてアクセシビリティ向上 -->
         <label for="userInput" class="sr-only">質問を入力</label>
         <input id="userInput" type="text" placeholder="例: 山代でスイーツが食べたい"
           class="flex-1 p-3 rounded-l-xl bg-white/60 dark:bg-gray-700/40 backdrop-blur text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none" />
@@ -178,7 +220,7 @@
       const loading = document.getElementById("loadingArea");
       if (!input.value.trim()) return;
       // ユーザーの発言を表示
-      messages.innerHTML += `<div class='text-cyan-500 mb-1'>👤 ${input.value}</div>`;
+      messages.innerHTML += `<div class='msg-user'>👤 ${input.value}</div>`;
       // ローディング表示
       loading.style.display = "block";
       // 疑似的なAI応答（ここをAPI連携に改造してもOK）
@@ -186,7 +228,7 @@
       // ローディング非表示
       loading.style.display = "none";
       // AIの返答を表示（実際はここをAPIの返答にする）
-      messages.innerHTML += `<div class='text-green-400 mb-2'>🤖 山代AI: 「${input.value}」について情報をお調べしました！（※ここはサンプルです）</div>`;
+      messages.innerHTML += `<div class='msg-ai'>🤖 山代AI: 「${input.value}」について情報をお調べしました！（※ここはサンプルです）</div>`;
       input.value = "";
       messages.scrollTop = messages.scrollHeight;
     }
