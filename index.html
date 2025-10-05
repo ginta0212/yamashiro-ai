@@ -213,24 +213,46 @@
       document.getElementById("userInput").focus();
     }
 
-    // メッセージ送信とローディング表示
-    async function sendMessage() {
-      const input = document.getElementById("userInput");
-      const messages = document.getElementById("messages");
-      const loading = document.getElementById("loadingArea");
-      if (!input.value.trim()) return;
-      // ユーザーの発言を表示
-      messages.innerHTML += `<div class='msg-user'>👤 ${input.value}</div>`;
-      // ローディング表示
-      loading.style.display = "block";
-      // 疑似的なAI応答（ここをAPI連携に改造してもOK）
-      await new Promise(res => setTimeout(res, 1200)); // 1.2秒待つ
-      // ローディング非表示
-      loading.style.display = "none";
-      // AIの返答を表示（実際はここをAPIの返答にする）
-      messages.innerHTML += `<div class='msg-ai'>🤖 山代AI: 「${input.value}」について情報をお調べしました！（※ここはサンプルです）</div>`;
-      input.value = "";
-      messages.scrollTop = messages.scrollHeight;
+<script>
+  // ...（省略：他のスクリプト部分はそのままでOK）...
+
+  // メッセージ送信とローディング表示（API対応＆エラー表示つき）
+  async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const messages = document.getElementById("messages");
+    const loading = document.getElementById("loadingArea");
+    if (!input.value.trim()) return;
+    // ユーザーの発言を表示
+    messages.innerHTML += `<div class='msg-user'>👤 ${input.value}</div>`;
+    // ローディング表示
+    loading.style.display = "block";
+
+    try {
+      // サーバーのAPIにPOSTリクエストを送る
+      const res = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input.value })
+      });
+
+      let replyText = '';
+      if (res.ok) {
+        const data = await res.json();
+        replyText = data.reply;
+      } else {
+        // サーバーからエラー応答（500など）
+        const data = await res.json().catch(() => ({}));
+        replyText = data.reply || "AIとの通信に失敗しました。";
+      }
+
+      messages.innerHTML += `<div class='msg-ai'>🤖 山代AI: ${replyText}</div>`;
+    } catch (e) {
+      // サーバー自体に接続できない場合
+      messages.innerHTML += `<div class='msg-ai'>🤖 山代AI: サーバーに接続できませんでした。</div>`;
+    }
+    loading.style.display = "none";
+    input.value = "";
+    messages.scrollTop = messages.scrollHeight;
     }
   </script>
 </body>
